@@ -1,0 +1,107 @@
+<form>
+  <div class="form-group form-inline">
+    Search:
+    <input
+      class="form-control ml-2"
+      type="text"
+      name="searchTerm"
+      [(ngModel)]="emailService.searchTerm"
+    />
+    <span class="ml-3" *ngIf="emailService.loading$ | async">Loading...</span>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col" sortable="from" (sort)="onSort($event)">From</th>
+        <th scope="col" sortable="to" (sort)="onSort($event)">To</th>
+        <th scope="col" sortable="cc" (sort)="onSort($event)">Cc</th>
+        <th scope="col" sortable="bcc" (sort)="onSort($event)">Bcc</th>
+        <th scope="col" sortable="subject" (sort)="onSort($event)">Subject</th>
+        <th scope="col" sortable="body" (sort)="onSort($event)">Body</th>
+        <th scope="col" sortable="date" (sort)="onSort($event)">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let email of emails$ | async">
+        <td>
+          <ngb-highlight
+            [result]="email.from"
+            [term]="emailService.searchTerm"
+            [highlightClass]="'highlight-email-content'"
+          ></ngb-highlight>
+        </td>
+        <td>
+          <span *ngFor="let to of email.to">
+            <ngb-highlight
+              [result]="to"
+              [term]="emailService.searchTerm"
+            ></ngb-highlight>
+            <br />
+          </span>
+        </td>
+        <td>
+          <span *ngFor="let cc of email.cc">
+            <ngb-highlight
+              [result]="cc"
+              [term]="emailService.searchTerm"
+            ></ngb-highlight>
+            <br />
+          </span>
+        </td>
+        <td>
+          <span *ngFor="let bcc of email.bcc">
+            <ngb-highlight
+              [result]="bcc"
+              [term]="emailService.searchTerm"
+            ></ngb-highlight>
+            <br />
+          </span>
+        </td>
+
+        <td>
+          <ngb-highlight
+            [result]="email.subject"
+            [term]="emailService.searchTerm"
+          ></ngb-highlight>
+        </td>
+        <td>
+          <ngb-highlight
+            [result]="email.body"
+            [term]="emailService.searchTerm"
+          ></ngb-highlight>
+        </td>
+        <td>
+          <ngb-highlight
+            [result]="email.date | date"
+            [term]="emailService.searchTerm"
+          ></ngb-highlight>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between p-2">
+    <ngb-pagination
+      [collectionSize]="total$ | async"
+      [(page)]="emailService.page"
+      [pageSize]="emailService.pageSize"
+      [maxSize]="5"
+    >
+    </ngb-pagination>
+    <div>
+      Items per page
+      <select
+        class="custom-select"
+        style="width: auto"
+        name="pageSize"
+        [(ngModel)]="emailService.pageSize"
+      >
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="15">15</option>
+        <option [ngValue]="20">20</option>
+      </select>
+    </div>
+  </div>
+</form>
